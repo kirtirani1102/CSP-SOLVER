@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-Powered CSP Solver with Sudoku and Cryptarithmetic featuring MRV, Forward Checking, and Backtracking.">
+    <title>CSP Solver | AI-Powered Constraint Satisfaction</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="bg-particles" id="bgParticles"></div>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <rect x="2" y="2" width="12" height="12" rx="3" stroke="currentColor" stroke-width="2"/>
+                        <rect x="18" y="2" width="12" height="12" rx="3" stroke="currentColor" stroke-width="2"/>
+                        <rect x="2" y="18" width="12" height="12" rx="3" stroke="currentColor" stroke-width="2"/>
+                        <rect x="18" y="18" width="12" height="12" rx="3" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="16" cy="16" r="4" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="app-title">CSP Solver</h1>
+                    <p class="app-subtitle">AI-Powered Constraint Satisfaction</p>
+                </div>
+            </div>
+            <div class="header-badge"><span class="badge-dot"></span><span>AI Engine Active</span></div>
+        </div>
+    </header>
+    <nav class="tab-nav">
+        <div class="tab-container">
+            <button class="tab-btn active" data-tab="sudoku" id="tabSudoku">
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="1" y="1" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="7" y1="1" x2="7" y2="19" stroke="currentColor"/><line x1="13" y1="1" x2="13" y2="19" stroke="currentColor"/><line x1="1" y1="7" x2="19" y2="7" stroke="currentColor"/><line x1="1" y1="13" x2="19" y2="13" stroke="currentColor"/></svg>
+                Sudoku Solver
+            </button>
+            <button class="tab-btn" data-tab="crypt" id="tabCrypt">
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M3 14L10 3L17 14H3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><text x="10" y="13" text-anchor="middle" fill="currentColor" font-size="7" font-weight="bold">A</text></svg>
+                Cryptarithmetic Solver
+            </button>
+            <div class="tab-indicator" id="tabIndicator"></div>
+        </div>
+    </nav>
+    <main class="main-content">
+        <!-- SUDOKU TAB -->
+        <section class="tab-panel active" id="panelSudoku">
+            <div class="solver-layout">
+                <div class="controls-panel">
+                    <div class="control-card">
+                        <h3 class="card-title">Difficulty</h3>
+                        <div class="preset-grid" id="difficultyPresets">
+                            <button class="preset-btn active" data-difficulty="easy">Easy</button>
+                            <button class="preset-btn" data-difficulty="medium">Medium</button>
+                            <button class="preset-btn" data-difficulty="hard">Hard</button>
+                            <button class="preset-btn" data-difficulty="expert">Expert</button>
+                            <button class="preset-btn preset-custom" data-difficulty="custom">✏️ Custom Input</button>
+                        </div>
+                    </div>
+                    <div class="control-card">
+                        <h3 class="card-title">Algorithm</h3>
+                        <div class="algo-buttons" id="algoButtons">
+                            <button class="algo-btn active" data-algo="backtracking"><span class="algo-name">Backtracking</span><span class="algo-desc">Basic recursive</span></button>
+                            <button class="algo-btn" data-algo="forwardChecking"><span class="algo-name">Forward Checking</span><span class="algo-desc">Domain pruning</span></button>
+                            <button class="algo-btn" data-algo="mrv"><span class="algo-name">MRV + FC</span><span class="algo-desc">Smart selection</span></button>
+                        </div>
+                    </div>
+                    <div class="control-card">
+                        <h3 class="card-title">Controls</h3>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="btnSolveSudoku"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><polygon points="4,2 14,8 4,14" fill="currentColor"/></svg>Solve</button>
+                            <button class="btn btn-secondary" id="btnResetSudoku"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8A6 6 0 1 1 8 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2 12V8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Reset</button>
+                        </div>
+                        <div class="toggle-row"><label class="toggle-label" for="toggleStepSudoku">Step-by-Step</label><label class="toggle-switch"><input type="checkbox" id="toggleStepSudoku"><span class="toggle-slider"></span></label></div>
+                        <div class="toggle-row"><label class="toggle-label" for="toggleCompare">Compare Algorithms</label><label class="toggle-switch"><input type="checkbox" id="toggleCompare"><span class="toggle-slider"></span></label></div>
+                    </div>
+                    <div class="control-card">
+                        <h3 class="card-title">Speed</h3>
+                        <div class="speed-control"><input type="range" id="speedSlider" min="1" max="100" value="50" class="speed-slider"><div class="speed-labels"><span>Slow</span><span id="speedValue">50ms</span><span>Fast</span></div></div>
+                    </div>
+                </div>
+                <div class="grid-section">
+                    <div class="sudoku-container"><div class="sudoku-grid" id="sudokuGrid"></div></div>
+                    <div class="domain-panel" id="domainPanel"><h3 class="card-title">Domain Reduction</h3><div class="domain-info" id="domainInfo"><p class="domain-placeholder">Select a cell to view its domain</p></div></div>
+                </div>
+                <div class="metrics-panel">
+                    <div class="control-card metrics-card">
+                        <h3 class="card-title">Performance</h3>
+                        <div class="metric-items" id="sudokuMetrics">
+                            <div class="metric-item"><span class="metric-label">Status</span><span class="metric-value" id="metricStatus">Ready</span></div>
+                            <div class="metric-item"><span class="metric-label">Time</span><span class="metric-value" id="metricTime">—</span></div>
+                            <div class="metric-item"><span class="metric-label">Steps</span><span class="metric-value" id="metricSteps">—</span></div>
+                            <div class="metric-item"><span class="metric-label">Backtracks</span><span class="metric-value" id="metricBacktracks">—</span></div>
+                            <div class="metric-item"><span class="metric-label">Nodes Explored</span><span class="metric-value" id="metricNodes">—</span></div>
+                        </div>
+                    </div>
+                    <div class="control-card compare-card hidden" id="comparePanel">
+                        <h3 class="card-title">Algorithm Comparison</h3>
+                        <div class="compare-table" id="compareTable"></div>
+                    </div>
+                    <div class="control-card log-card">
+                        <h3 class="card-title">Solving Log</h3>
+                        <div class="log-container" id="sudokuLog"><div class="log-placeholder">Solving log will appear here...</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- CRYPTARITHMETIC TAB -->
+        <section class="tab-panel" id="panelCrypt">
+            <div class="solver-layout crypt-layout">
+                <div class="controls-panel">
+                    <div class="control-card">
+                        <h3 class="card-title">Puzzle Input</h3>
+                        <input type="text" id="cryptInput" class="crypt-input" placeholder="e.g. SEND + MORE = MONEY" spellcheck="false" autocomplete="off">
+                        <div class="preset-grid crypt-presets" id="cryptPresets">
+                            <button class="preset-btn crypt-preset active" data-puzzle="SEND + MORE = MONEY">SEND+MORE=MONEY</button>
+                            <button class="preset-btn crypt-preset" data-puzzle="TWO + TWO = FOUR">TWO+TWO=FOUR</button>
+                            <button class="preset-btn crypt-preset" data-puzzle="BASE + BALL = GAMES">BASE+BALL=GAMES</button>
+                            <button class="preset-btn crypt-preset" data-puzzle="EAT + THAT = APPLE">EAT+THAT=APPLE</button>
+                        </div>
+                    </div>
+                    <div class="control-card">
+                        <h3 class="card-title">Controls</h3>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary btn-crypt" id="btnSolveCrypt"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><polygon points="4,2 14,8 4,14" fill="currentColor"/></svg>Solve</button>
+                            <button class="btn btn-secondary" id="btnResetCrypt"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8A6 6 0 1 1 8 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2 12V8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Reset</button>
+                        </div>
+                        <div class="toggle-row"><label class="toggle-label" for="toggleStepCrypt">Step-by-Step</label><label class="toggle-switch"><input type="checkbox" id="toggleStepCrypt"><span class="toggle-slider"></span></label></div>
+                    </div>
+                    <div class="control-card">
+                        <h3 class="card-title">Speed</h3>
+                        <div class="speed-control"><input type="range" id="speedSliderCrypt" min="1" max="100" value="50" class="speed-slider"><div class="speed-labels"><span>Slow</span><span id="speedValueCrypt">50ms</span><span>Fast</span></div></div>
+                    </div>
+                    <div class="control-card metrics-card">
+                        <h3 class="card-title">Performance</h3>
+                        <div class="metric-items" id="cryptMetrics">
+                            <div class="metric-item"><span class="metric-label">Status</span><span class="metric-value" id="cryptMetricStatus">Ready</span></div>
+                            <div class="metric-item"><span class="metric-label">Time</span><span class="metric-value" id="cryptMetricTime">—</span></div>
+                            <div class="metric-item"><span class="metric-label">Steps</span><span class="metric-value" id="cryptMetricSteps">—</span></div>
+                            <div class="metric-item"><span class="metric-label">Backtracks</span><span class="metric-value" id="cryptMetricBacktracks">—</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="crypt-center">
+                    <div class="control-card crypt-display-card">
+                        <h3 class="card-title">Puzzle</h3>
+                        <div class="crypt-puzzle-display" id="cryptPuzzleDisplay"><div class="crypt-equation" id="cryptEquation"><span class="crypt-placeholder-text">Enter a puzzle to begin</span></div></div>
+                    </div>
+                    <div class="control-card">
+                        <h3 class="card-title">Letter → Digit Mapping</h3>
+                        <div class="mapping-grid" id="mappingGrid"></div>
+                    </div>
+                    <div class="control-card">
+                        <h3 class="card-title">Domain Reduction</h3>
+                        <div class="crypt-domains" id="cryptDomains"><p class="domain-placeholder">Domains will appear during solving</p></div>
+                    </div>
+                </div>
+                <div class="crypt-log-panel">
+                    <div class="control-card log-card">
+                        <h3 class="card-title">Solving Log</h3>
+                        <div class="log-container" id="cryptLog"><div class="log-placeholder">Solving log will appear here...</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="app-footer"><p>CSP Solver — Built with Backtracking, Forward Checking & MRV Heuristic</p></footer>
+    <script src="js/heuristics.js"></script>
+    <script src="js/sudokuSolver.js"></script>
+    <script src="js/cryptSolver.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
